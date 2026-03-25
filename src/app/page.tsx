@@ -1,0 +1,201 @@
+"use client";
+
+import { Suspense, useEffect, useState, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  BlogPostListItem,
+  BlogSource,
+  fetchPosts,
+  fetchSources,
+  fetchTags,
+  searchPosts,
+} from "@/lib/api";
+import PostCard from "@/components/PostCard";
+import SourceFilter from "@/components/SourceFilter";
+import TagFilter from "@/components/TagFilter";
+import SearchBar from "@/components/SearchBar";
+import Pagination from "@/components/Pagination";
+
+export default function Page() {
+  return (
+    <Suspense>
+      <Home />
+    </Suspense>
+  );
+}
+
+function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const pageParam = Number(searchParams.get("page") || "0");
+  const sourceParam = searchParams.get("source")
+    ? Number(searchParams.get("source"))
+    : null;
+  const tagParam = searchParams.get("tag") || null;
+  const keywordParam = searchParams.get("keyword") || null;
+
+  const [posts, setPosts] = useState<BlogPostListItem[]>([]);
+  const [sources, setSources] = useState<BlogSource[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const updateURL = useCallback(
+    (params: {
+      page?: number;
+      source?: number | null;
+      tag?: string | null;
+      keyword?: string | null;
+    }) => {
+      const url = new URLSearchParams();
+      const page = params.page ?? pageParam;
+      const source = params.source !== undefined ? params.source : sourceParam;
+      const tag = params.tag !== undefined ? params.tag : tagParam;
+      const keyword =
+        params.keyword !== undefined ? params.keyword : keywordParam;
+
+      if (page > 0) url.set("page", String(page));
+      if (source) url.set("source", String(source));
+      if (tag) url.set("tag", tag);
+      if (keyword) url.set("keyword", keyword);
+
+      const qs = url.toString();
+      router.push(qs ? `/?${qs}` : "/", { scroll: false });
+    },
+    [router, pageParam, sourceParam, tagParam, keywordParam]
+  );
+
+  const loadPosts = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = keywordParam
+        ? await searchPosts(keywordParam, pageParam, 12)
+        : await fetchPosts(
+            pageParam,
+            12,
+            sourceParam ?? undefined,
+            tagParam ?? undefined
+          );
+      setPosts(data.content);
+      setTotalPages(data.totalPages);
+      setTotalElements(data.totalElements);
+    } catch (e) {
+      console.error("Failed to load posts", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [pageParam, sourceParam, tagParam, keywordParam]);
+
+  useEffect(() => {
+    fetchSources().then(setSources).catch(console.error);
+    fetchTags().then(setTags).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
+
+  const handleSourceSelect = (id: number | null) => {
+    updateURL({ page: 0, source: id, tag: null, keyword: null });
+  };
+
+  const handleTagSelect = (tag: string | null) => {
+    updateURL({ page: 0, source: null, tag, keyword: null });
+  };
+
+  const handleSearch = (keyword: string) => {
+    updateURL({ page: 0, source: null, tag: null, keyword });
+  };
+
+  const handleClearSearch = () => {
+    updateURL({ page: 0, keyword: null });
+  };
+
+  const handlePageChange = (page: number) => {
+    updateURL({ page });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <div className="min-h-screen">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-6xl px-6 py-8">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-extrabold tracking-tight">
+                Tech Blog Hub
+              </h1>
+              <p className="mt-1 text-sm text-gray-500">
+                기술 블로그 {totalElements}개의 글을 모아봅니다
+              </p>
+            </div>
+            <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
+          </div>
+          <div className="space-y-3">
+            <SourceFilter
+              sources={sources}
+              selected={sourceParam}
+              onSelect={handleSourceSelect}
+            />
+            <div className="h-px bg-gray-100" />
+            <TagFilter
+              tags={tags}
+              selected={tagParam}
+              onSelect={handleTagSelect}
+            />
+          </div>
+        </div>
+      </header>
+
+      {/* Content */}
+      <main className="mx-auto max-w-6xl px-6 py-8">
+        {keywordParam && (
+          <div className="mb-6 flex items-center gap-2">
+            <span className="text-sm text-gray-500">
+              &ldquo;{keywordParam}&rdquo; 검색 결과 {totalElements}건
+            </span>
+            <button
+              onClick={handleClearSearch}
+              className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-600 hover:bg-gray-300"
+            >
+              검색 해제
+            </button>
+          </div>
+        )}
+
+        {loading ? (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-52 animate-pulse rounded-2xl bg-gray-200"
+              />
+            ))}
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="py-20 text-center text-gray-400">
+            게시글이 없습니다
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        <div className="mt-10">
+          <Pagination
+            page={pageParam}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      </main>
+    </div>
+  );
+}
