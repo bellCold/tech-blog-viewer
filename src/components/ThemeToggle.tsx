@@ -3,7 +3,11 @@
 import { useTheme } from "./ThemeProvider";
 
 export default function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, mounted } = useTheme();
+
+  if (!mounted) {
+    return <div className="h-9 w-9" />;
+  }
 
   return (
     <button
