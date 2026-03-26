@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, useCallback } from "react";
+import { Suspense, useEffect, useState, useCallback, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   BlogPostListItem,
@@ -15,6 +15,7 @@ import SourceFilter from "@/components/SourceFilter";
 import TagFilter from "@/components/TagFilter";
 import SearchBar from "@/components/SearchBar";
 import Pagination from "@/components/Pagination";
+import StatusSidebar from "@/components/StatusIndicator";
 
 export default function Page() {
   return (
@@ -27,6 +28,9 @@ export default function Page() {
 function Home() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [sidebarTop, setSidebarTop] = useState(0);
 
   const pageParam = Number(searchParams.get("page") || "0");
   const sourceParam = searchParams.get("source")
@@ -87,6 +91,12 @@ function Home() {
       setLoading(false);
     }
   }, [pageParam, sourceParam, tagParam, keywordParam]);
+
+  useEffect(() => {
+    if (gridRef.current) {
+      setSidebarTop(gridRef.current.getBoundingClientRect().top + window.scrollY);
+    }
+  });
 
   useEffect(() => {
     fetchSources().then(setSources).catch(console.error);
@@ -180,7 +190,7 @@ function Home() {
             게시글이 없습니다
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div ref={gridRef} className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
@@ -196,6 +206,7 @@ function Home() {
           />
         </div>
       </main>
+      <StatusSidebar top={sidebarTop} />
     </div>
   );
 }
