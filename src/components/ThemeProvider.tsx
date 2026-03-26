@@ -31,12 +31,18 @@ export default function ThemeProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      return document.documentElement.classList.contains("dark") ? "dark" : "light";
+    }
+    return "light";
+  });
 
   useEffect(() => {
-    const saved = localStorage.getItem("theme") as Theme | null;
-    if (saved) {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
       setTheme(saved);
+      document.documentElement.classList.toggle("dark", saved === "dark");
     }
   }, []);
 
