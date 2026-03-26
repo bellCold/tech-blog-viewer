@@ -16,10 +16,10 @@ const STATUS_DOT: Record<StatusLevel, string> = {
 };
 
 const STATUS_BG: Record<StatusLevel, string> = {
-  operational: "bg-green-50 border-green-200",
-  degraded: "bg-yellow-50 border-yellow-200",
-  outage: "bg-red-50 border-red-200",
-  unknown: "bg-gray-50 border-gray-200",
+  operational: "bg-green-50 border-green-200 dark:bg-green-950/50 dark:border-green-800",
+  degraded: "bg-yellow-50 border-yellow-200 dark:bg-yellow-950/50 dark:border-yellow-800",
+  outage: "bg-red-50 border-red-200 dark:bg-red-950/50 dark:border-red-800",
+  unknown: "bg-gray-50 border-gray-200 dark:bg-gray-900 dark:border-gray-700",
 };
 
 const STATUS_TEXT: Record<StatusLevel, string> = {
@@ -65,7 +65,7 @@ export default function StatusSidebar({ top }: { top: number }) {
         <div className={`rounded-2xl border p-4 ${STATUS_BG[overall]}`}>
           <div className="mb-3 flex items-center gap-2">
             <span className={`h-2.5 w-2.5 rounded-full ${STATUS_DOT[overall]}`} />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
               서비스 상태
             </h3>
           </div>
@@ -75,7 +75,7 @@ export default function StatusSidebar({ top }: { top: number }) {
           <div className="space-y-2.5">
             {loading
               ? Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="h-5 animate-pulse rounded bg-white/50" />
+                  <div key={i} className="h-5 animate-pulse rounded bg-white/50 dark:bg-gray-700/50" />
                 ))
               : statuses.map((svc) => (
                   <a
@@ -84,11 +84,11 @@ export default function StatusSidebar({ top }: { top: number }) {
                     target="_blank"
                     rel="noopener noreferrer"
                     title={svc.description}
-                    className="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2 transition-colors hover:bg-white"
+                    className="flex items-center justify-between rounded-lg bg-white/60 px-3 py-2 transition-colors hover:bg-white dark:bg-gray-800/60 dark:hover:bg-gray-800"
                   >
                     <div className="flex items-center gap-2">
                       <span className={`h-1.5 w-1.5 rounded-full ${STATUS_DOT[svc.status]}`} />
-                      <span className="text-xs font-medium text-gray-700">{svc.name}</span>
+                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{svc.name}</span>
                     </div>
                     <span className={`text-[10px] font-medium ${STATUS_TEXT[svc.status]}`}>
                       {svc.status === "operational" ? "UP" : svc.status === "unknown" ? "?" : "DOWN"}
@@ -96,7 +96,7 @@ export default function StatusSidebar({ top }: { top: number }) {
                   </a>
                 ))}
           </div>
-          <p className="mt-3 text-[10px] text-gray-400">30초마다 자동 갱신</p>
+          <p className="mt-3 text-[10px] text-gray-400 dark:text-gray-500">30초마다 자동 갱신</p>
         </div>
       </div>
     </div>
