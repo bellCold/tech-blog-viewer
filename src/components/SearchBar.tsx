@@ -120,21 +120,21 @@ export default function SearchBar({ onSearch, onClear }: Props) {
           onChange={handleChange}
           onFocus={handleFocus}
           placeholder="기술 블로그 검색..."
-          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-20 text-sm outline-none transition-colors focus:border-gray-400 focus:bg-white"
+          className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-20 text-sm outline-none transition-colors focus:border-gray-400 focus:bg-white dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:border-gray-500 dark:focus:bg-gray-800"
         />
         <div className="absolute right-2 top-1/2 flex -translate-y-1/2 gap-1">
           {value && (
             <button
               type="button"
               onClick={handleClear}
-              className="rounded-lg px-2 py-1 text-xs text-gray-400 hover:text-gray-600"
+              className="rounded-lg px-2 py-1 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               지우기
             </button>
           )}
           <button
             type="submit"
-            className="rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-gray-700"
+            className="rounded-lg bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-gray-700 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-gray-300"
           >
             검색
           </button>
@@ -142,14 +142,14 @@ export default function SearchBar({ onSearch, onClear }: Props) {
       </form>
 
       {showHistory && filteredSearches.length > 0 && (
-        <div className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white py-2 shadow-lg">
+        <div className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white py-2 shadow-lg dark:border-gray-700 dark:bg-gray-800">
           <div className="flex items-center justify-between px-4 pb-2">
-            <span className="text-xs font-medium text-gray-500">
+            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
               최근 검색어
             </span>
             <button
               onClick={handleClearAll}
-              className="text-xs text-gray-400 hover:text-gray-600"
+              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               전체 삭제
             </button>
@@ -158,12 +158,12 @@ export default function SearchBar({ onSearch, onClear }: Props) {
             <button
               key={keyword}
               onClick={() => handleSelectHistory(keyword)}
-              className="flex w-full items-center justify-between px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+              className="flex w-full items-center justify-between px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700"
             >
               <span className="truncate">{keyword}</span>
               <span
                 onClick={(e) => handleRemoveHistory(e, keyword)}
-                className="ml-2 shrink-0 text-xs text-gray-400 hover:text-gray-600"
+                className="ml-2 shrink-0 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 삭제
               </span>

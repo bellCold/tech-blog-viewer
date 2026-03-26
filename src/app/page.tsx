@@ -16,6 +16,7 @@ import TagFilter from "@/components/TagFilter";
 import SearchBar from "@/components/SearchBar";
 import Pagination from "@/components/Pagination";
 import StatusSidebar from "@/components/StatusIndicator";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Page() {
   return (
@@ -131,18 +132,21 @@ function Home() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div className="mx-auto max-w-6xl px-6 py-8">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-extrabold tracking-tight">
                 Tech Blog Hub
               </h1>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 기술 블로그 {totalElements}개의 글을 모아봅니다
               </p>
             </div>
-            <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
+            <div className="flex items-center gap-2">
+              <SearchBar onSearch={handleSearch} onClear={handleClearSearch} />
+              <ThemeToggle />
+            </div>
           </div>
           <div className="space-y-3">
             <SourceFilter
@@ -150,7 +154,7 @@ function Home() {
               selected={sourceParam}
               onSelect={handleSourceSelect}
             />
-            <div className="h-px bg-gray-100" />
+            <div className="h-px bg-gray-100 dark:bg-gray-800" />
             <TagFilter
               tags={tags}
               selected={tagParam}
@@ -164,12 +168,12 @@ function Home() {
       <main className="mx-auto max-w-6xl px-6 py-8">
         {keywordParam && (
           <div className="mb-6 flex items-center gap-2">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               &ldquo;{keywordParam}&rdquo; 검색 결과 {totalElements}건
             </span>
             <button
               onClick={handleClearSearch}
-              className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-600 hover:bg-gray-300"
+              className="rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-600 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
             >
               검색 해제
             </button>
@@ -181,12 +185,12 @@ function Home() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="h-52 animate-pulse rounded-2xl bg-gray-200"
+                className="h-52 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-800"
               />
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <div className="py-20 text-center text-gray-400">
+          <div className="py-20 text-center text-gray-400 dark:text-gray-500">
             게시글이 없습니다
           </div>
         ) : (

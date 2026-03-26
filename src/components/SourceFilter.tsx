@@ -22,8 +22,8 @@ export default function SourceFilter({ sources, selected, onSelect }: Props) {
         onClick={() => onSelect(null)}
         className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
           selected === null
-            ? "bg-gray-900 text-white"
-            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+            : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
         }`}
       >
         전체
@@ -34,8 +34,8 @@ export default function SourceFilter({ sources, selected, onSelect }: Props) {
           onClick={() => onSelect(source.id)}
           className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
             selected === source.id
-              ? "bg-gray-900 text-white"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
           }`}
         >
           {source.name}
@@ -44,7 +44,7 @@ export default function SourceFilter({ sources, selected, onSelect }: Props) {
       {hasMore && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="rounded-full border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-400 transition-colors hover:border-gray-400 hover:text-gray-600"
+          className="rounded-full border border-dashed border-gray-300 px-4 py-2 text-sm font-medium text-gray-400 transition-colors hover:border-gray-400 hover:text-gray-600 dark:border-gray-600 dark:text-gray-500 dark:hover:border-gray-500 dark:hover:text-gray-300"
         >
           {expanded ? "접기" : `+${sources.length - VISIBLE_COUNT}개 더보기`}
         </button>
