@@ -4,9 +4,9 @@ export async function GET() {
   const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
   try {
-    const res = await fetch(`${backendUrl}/api/sources`, {
+    const res = await fetch(`${backendUrl}/api/health`, {
       cache: "no-store",
-      signal: AbortSignal.timeout(10000),
+      signal: AbortSignal.timeout(30000),
     });
 
     return NextResponse.json({
