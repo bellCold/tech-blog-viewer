@@ -47,9 +47,17 @@ export default function StatusSidebar({ top }: { top: number }) {
         .catch(console.error)
         .finally(() => setLoading(false));
     };
+    const keepalive = () => {
+      fetch("/api/keepalive").catch(() => {});
+    };
     load();
-    const interval = setInterval(load, 30000);
-    return () => clearInterval(interval);
+    keepalive();
+    const statusInterval = setInterval(load, 30000);
+    const keepaliveInterval = setInterval(keepalive, 5 * 60 * 1000);
+    return () => {
+      clearInterval(statusInterval);
+      clearInterval(keepaliveInterval);
+    };
   }, []);
 
   const overall = overallStatus(statuses);
