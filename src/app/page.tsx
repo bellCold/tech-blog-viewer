@@ -106,10 +106,7 @@ function Home() {
   useEffect(() => {
     fetchSources().then(setSources).catch(console.error);
     fetchTags().then(setTags).catch(console.error);
-    recordVisit()
-      .then(() => fetchVisitorStats())
-      .then(setVisitorStats)
-      .catch(console.error);
+    recordVisit().then(() => fetchVisitorStats().then(setVisitorStats));
   }, []);
 
   useEffect(() => {

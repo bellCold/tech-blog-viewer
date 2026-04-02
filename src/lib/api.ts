@@ -82,12 +82,21 @@ export interface VisitorStats {
 }
 
 export async function recordVisit(): Promise<void> {
-  await fetch(`${API_BASE}/visitors`, { method: "POST" });
+  try {
+    await fetch(`${API_BASE}/visitors`, { method: "POST" });
+  } catch {
+    // 방문 기록 실패는 무시
+  }
 }
 
-export async function fetchVisitorStats(): Promise<VisitorStats> {
-  const res = await fetch(`${API_BASE}/visitors`);
-  return res.json();
+export async function fetchVisitorStats(): Promise<VisitorStats | null> {
+  try {
+    const res = await fetch(`${API_BASE}/visitors`);
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function searchPosts(
