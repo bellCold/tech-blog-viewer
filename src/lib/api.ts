@@ -75,6 +75,21 @@ export async function fetchSources(): Promise<BlogSource[]> {
   return res.json();
 }
 
+export interface VisitorStats {
+  todayCount: number;
+  yesterdayCount: number;
+  totalCount: number;
+}
+
+export async function recordVisit(): Promise<void> {
+  await fetch(`${API_BASE}/visitors`, { method: "POST" });
+}
+
+export async function fetchVisitorStats(): Promise<VisitorStats> {
+  const res = await fetch(`${API_BASE}/visitors`);
+  return res.json();
+}
+
 export async function searchPosts(
   keyword: string,
   page = 0,

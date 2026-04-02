@@ -5,9 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   BlogPostListItem,
   BlogSource,
+  VisitorStats,
   fetchPosts,
   fetchSources,
   fetchTags,
+  fetchVisitorStats,
+  recordVisit,
   searchPosts,
 } from "@/lib/api";
 import PostCard from "@/components/PostCard";
@@ -46,6 +49,7 @@ function Home() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [visitorStats, setVisitorStats] = useState<VisitorStats | null>(null);
 
   const updateURL = useCallback(
     (params: {
@@ -102,6 +106,10 @@ function Home() {
   useEffect(() => {
     fetchSources().then(setSources).catch(console.error);
     fetchTags().then(setTags).catch(console.error);
+    recordVisit()
+      .then(() => fetchVisitorStats())
+      .then(setVisitorStats)
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -210,6 +218,31 @@ function Home() {
           />
         </div>
       </main>
+      {visitorStats && (
+        <div
+          className="absolute hidden 2xl:block rounded-2xl border border-gray-200/60 bg-white/90 shadow-lg shadow-gray-200/50 backdrop-blur-sm dark:border-gray-700/60 dark:bg-gray-900/90 dark:shadow-black/20"
+          style={{ top: 32, left: "calc(50% - 620px - 14rem)" }}
+        >
+          <div className="border-b border-gray-200/60 px-5 py-2.5 dark:border-gray-700/60">
+            <span className="text-sm font-semibold tracking-wide text-gray-500 dark:text-gray-400">전체 방문자</span>
+          </div>
+          <div className="px-5 py-4">
+            <div className="text-3xl font-extrabold tabular-nums text-gray-900 dark:text-gray-100">
+              {visitorStats.totalCount.toLocaleString()}
+            </div>
+            <div className="mt-3 space-y-1.5">
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <span className="text-gray-400 dark:text-gray-500">Today</span>
+                <span className="font-semibold tabular-nums text-blue-600 dark:text-blue-400">{visitorStats.todayCount.toLocaleString()}</span>
+              </div>
+              <div className="flex items-center justify-between gap-4 text-sm">
+                <span className="text-gray-400 dark:text-gray-500">Yesterday</span>
+                <span className="font-semibold tabular-nums text-gray-600 dark:text-gray-300">{visitorStats.yesterdayCount.toLocaleString()}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <StatusSidebar top={sidebarTop} />
     </div>
   );
